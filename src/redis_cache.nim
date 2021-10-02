@@ -46,7 +46,7 @@ proc initRedisPool*(cfg: Config) {.async.} =
 
 template pidKey(name: string): string = "pid:" & $(hash(name) div 1_000_000)
 template profileKey(name: string): string = "p:" & name
-template listKey(l: List): string = toLower("l:" & l.username & '/' & l.name)
+template listKey(l: List): string = "l:" & l.id
 
 proc get(query: string): Future[string] {.async.} =
   pool.withAcquire(r):
@@ -109,9 +109,9 @@ proc getCachedPhotoRail*(name: string): Future[PhotoRail] {.async.} =
     result = await getPhotoRail(name)
     await cache(result, name)
 
-proc getCachedList*(username=""; name=""; id=""): Future[List] {.async.} =
-  let list = if id.len > 0: redisNil
-             else: await get(toLower("l:" & username & '/' & name))
+proc getCachedList*(username=""; slug=""; id=""): Future[List] {.async.} =
+  let list = if id.len == 0: redisNil
+             else: await get("l:" & id )
 
   if list != redisNil:
     uncompress(list).thaw(result)
@@ -119,7 +119,7 @@ proc getCachedList*(username=""; name=""; id=""): Future[List] {.async.} =
     if id.len > 0:
       result = await getGraphListById(id)
     else:
-      result = await getGraphList(username, name)
+      result = await getGraphList(username, slug)
     await cache(result)
 
 proc getCachedRss*(key: string): Future[Rss] {.async.} =
