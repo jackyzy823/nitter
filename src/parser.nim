@@ -49,12 +49,15 @@ proc parseGraphProfile*(js: JsonNode; username: string): Profile =
   let id = js{"data", "user", "rest_id"}.getStr
   result = parseProfile(user, id)
 
+
 proc parseGraphList*(js: JsonNode): List =
   if js.isNull: return
 
   var list = js{"data", "user_by_screen_name", "list"}
   if list.isNull:
     list = js{"data", "list"}
+  if list.isNull:
+    list = js{"content", "itemContent", "list"}
   if list.isNull:
     return
 
@@ -69,6 +72,25 @@ proc parseGraphList*(js: JsonNode): List =
   )
   if result.banner.len == 0:
     result.banner = list{"default_banner_media", "media_info", "url"}.getImageStr
+
+proc parseGraphListsInfo*(js: JsonNode): List =
+  if js.isNull: return
+  var list = js{"content", "itemContent", "list"}
+  if list.isNull:
+    return
+
+  result = List(
+    id: list{"id_str"}.getStr,
+    name: list{"name"}.getStr,
+    username: list{"user_results", "result" , "legacy", "screen_name"}.getStr,
+    userId: list{"user_results","result" ,"rest_id"}.getStr,
+    description: list{"description"}.getStr,
+    members: list{"member_count"}.getInt,
+    banner: list{"custom_banner_media", "media_info", "original_img_url"}.getImageStr
+  )
+  if result.banner.len == 0:
+    result.banner =  list{"default_banner_media", "media_info", "original_img_url"}.getImageStr
+  # TODO salient_rect
 
 proc parseListMembers*(js: JsonNode; cursor: string): Result[Profile] =
   result = Result[Profile](
@@ -448,3 +470,25 @@ proc parsePhotoRail*(js: JsonNode): PhotoRail =
 
     if url.len == 0: continue
     result.add GalleryPhoto(url: url, tweetId: $t.id)
+
+proc parseGraphLists*(js: JsonNode; cursor: string): Result[List] =
+  result = Result[List](
+    beginning: cursor.len == 0,
+    query: Query(kind: lists)
+  )
+
+  if js.isNull: return
+
+
+  let instructions = ? js{"data", "user", "result", "timeline", "timeline", "instructions"}
+  if instructions.len == 0: return
+
+  for e in instructions[instructions.len - 1]{"entries"}:
+    let entry = e{"entryId"}.getStr
+    if "list-" in entry:
+      result.content.add parseGraphListsInfo(e)
+    #TODO
+    elif "cursor-top" in entry:
+      result.top = e.getCursor
+    elif "cursor-bottom" in entry:
+      result.bottom = e.getCursor

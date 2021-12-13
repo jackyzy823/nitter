@@ -72,7 +72,7 @@ type
     variants*: seq[VideoVariant]
 
   QueryKind* = enum
-    posts, replies, media, users, tweets, userList
+    posts, replies, media, users, tweets, userList, lists
 
   Query* = object
     kind*: QueryKind

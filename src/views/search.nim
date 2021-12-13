@@ -38,6 +38,8 @@ proc renderProfileTabs*(query: Query; username: string): VNode =
       a(href=(link & "/media")): text "Media"
     li(class=query.getTabClass(tweets)):
       a(href=(link & "/search")): text "Search"
+    li(class=query.getTabClass(lists)):
+      a(href=(link & "/lists")): text "Lists"
 
 proc renderSearchTabs*(query: Query): VNode =
   var q = query

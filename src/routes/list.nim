@@ -18,8 +18,36 @@ template respList*(list, timeline, title, vnode: typed) =
 
   resp renderMain(html, request, cfg, prefs, titleText=title, rss=rss, banner=list.banner)
 
+template respLists*(lists, title ,name : typed) = 
+  let html = renderLists(lists, name,  prefs, getPath())
+  resp renderMain(html, request, cfg, prefs, titleText=title)
+
 proc createListRouter*(cfg: Config) =
   router list:
+    get "/@name/lists":
+      cond '.' notin @"name"
+      cond @"name" != "i"
+      let
+        prefs = cookiePrefs()
+        profile = await getCachedProfile(@"name")
+        profileId = profile.id  #TODO suspend
+        lists = await getGraphCombinedLists(profileId, getCursor())
+        title = "Lists created by @"&  @"name"
+      echo "profileid" , profileId, "list" ,lists
+      respLists(lists,title, @"name")
+
+    get "/@name/lists/memberships":
+      cond '.' notin @"name"
+      cond @"name" != "i"
+      let
+        prefs = cookiePrefs()
+        profile = await getCachedProfile(@"name")
+        profileId = profile.id  #TODO suspend
+        lists = await getGraphListMemberships(profileId, getCursor())
+        title = "List memberships for @" &  @"name"
+      echo profileId,lists
+      respLists(lists,title, @"name")
+
     get "/@name/lists/@slug/?":
       cond '.' notin @"name"
       cond @"name" != "i"

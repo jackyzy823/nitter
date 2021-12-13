@@ -20,6 +20,26 @@ proc getGraphListById*(id: string): Future[List] {.async.} =
     js = await fetch(graphListId ? {"variables": $variables})
   result = parseGraphList(js)
 
+proc getGraphListMemberships*(id: string; after=""): Future[Result[List]] {.async.} =
+  let
+    variables = %*{"userId":id ,"count":20, "cursor": after ,
+      "withSuperFollowsUserFields":false, "withBirdwatchPivots":false ,
+      "withDownvotePerspective":false, "withReactionsMetadata":false,
+      "withReactionsPerspective":false, "withSuperFollowsTweetFields":false}
+    js = await fetch(graphListMemberships ? {"variables": $variables})
+  result = parseGraphLists(js, after)
+
+proc getGraphCombinedLists*(id: string; after=""): Future[Result[List]] {.async.} =
+  let
+    variables = %*{"userId":id ,"count":100, "cursor": after ,
+      "withSuperFollowsUserFields":false, "withBirdwatchPivots":false ,
+      "withDownvotePerspective":false, "withReactionsMetadata":false,
+      "withReactionsPerspective":false, "withSuperFollowsTweetFields":false}
+    js = await fetch(graphCombinedLists ? {"variables": $variables})
+  result = parseGraphLists(js, after)
+
+
+
 proc getListTimeline*(id: string; after=""): Future[Timeline] {.async.} =
   let
     ps = genParams({"list_id": id, "ranking_mode": "reverse_chronological"}, after)

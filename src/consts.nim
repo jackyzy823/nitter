@@ -21,6 +21,8 @@ const
   graphUser* = graphql / "E4iSsd6gypGFWx2eUhSC1g/UserByScreenName"
   graphList* = graphql / "ErWsz9cObLel1BF-HjuBlA/ListBySlug"
   graphListId* = graphql / "JADTh6cjebfgetzvF3tQvQ/List"
+  graphListMemberships* = graphql / "Mp2IxZI0PcvViR-tt-Wu8Q/ListMemberships"
+  graphCombinedLists* = graphql / "A1kKUForhtox2KfOASS_7w/CombinedLists"
 
   timelineParams* = {
     "include_profile_interstitial_type": "0",

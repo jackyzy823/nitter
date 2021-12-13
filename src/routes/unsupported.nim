@@ -12,7 +12,6 @@ proc createUnsupportedRouter*(cfg: Config) =
     get "/about/feature": feature()
     get "/intent/?@i?": feature()
     get "/login/?@i?": feature()
-    get "/@name/lists/?": feature()
 
     get "/i/@i?/?@j?":
       cond @"i" notin ["status", "lists"]
