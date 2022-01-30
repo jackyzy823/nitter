@@ -289,6 +289,10 @@ proc parseTweet(js: JsonNode; jsCard: JsonNode = newJNull()): Tweet =
       result.text.removeSuffix(" Learn more.")
       result.available = false
 
+proc parseRecommendations*(js: JsonNode): Recommendations =
+  for u in js:
+    result.add parseUser(u{"user"})
+
 proc parseGraphTweet(js: JsonNode; isLegacy=false): Tweet =
   if js.kind == JNull:
     return Tweet()

@@ -9,6 +9,7 @@ const
   hourInSeconds = 60 * 60
   apiMaxReqs: Table[Api, int] = {
     Api.search: 50,
+    Api.recommendations: 60,
     Api.tweetDetail: 500,
     Api.userTweets: 500,
     Api.userTweetsAndReplies: 500,

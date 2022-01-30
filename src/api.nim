@@ -144,6 +144,12 @@ proc getPhotoRail*(id: string): Future[PhotoRail] {.async.} =
     url = graphUserMedia ? params
   result = parseGraphPhotoRail(await fetch(url, Api.userMedia))
 
+proc getRecommendations*(id: string): Future[Recommendations] {.async.} =
+  let
+    ps = genParams({"user_id": id})
+    url = recommendations ? ps
+  result = parseRecommendations(await fetch(url, Api.recommendations))
+
 proc resolve*(url: string; prefs: Prefs): Future[string] {.async.} =
   let client = newAsyncHttpClient(maxRedirects=0)
   try:
