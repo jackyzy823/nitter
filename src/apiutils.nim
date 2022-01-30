@@ -28,6 +28,25 @@ proc getOauthHeader(url, oauthToken, oauthTokenSecret: string): string =
 
   return getOauth1RequestHeader(params)["authorization"]
 
+proc genParams*(pars: openArray[(string, string)] = @[]; cursor="";
+                count="20"; ext=true): seq[(string, string)] =
+  result = timelineParams
+  for p in pars:
+    result &= p
+  if ext:
+    result &= ("ext", "mediaStats,isBlueVerified,isVerified,blue,blueVerified")
+    result &= ("include_ext_alt_text", "1")
+    result &= ("include_ext_media_availability", "1")
+  if count.len > 0:
+    result &= ("count", count)
+  if cursor.len > 0:
+    # The raw cursor often has plus signs, which sometimes get turned into spaces,
+    # so we need to turn them back into a plus
+    if " " in cursor:
+      result &= ("cursor", cursor.replace(" ", "+"))
+    else:
+      result &= ("cursor", cursor)
+
 proc genHeaders*(url, oauthToken, oauthTokenSecret: string): HttpHeaders =
   let header = getOauthHeader(url, oauthToken, oauthTokenSecret)
 

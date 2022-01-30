@@ -1,11 +1,12 @@
 # SPDX-License-Identifier: AGPL-3.0-only
-import uri, strutils
+import uri, sequtils, strutils
 
 const
   consumerKey* = "3nVuSoBZnx6U4vzUxf5w"
   consumerSecret* = "Bcs59EFbbsdF6Sl9Ng71smgStWEGwXXKSjYvPVt7qys"
 
-  gql = parseUri("https://api.x.com") / "graphql"
+  api = parseUri("https://api.x.com")
+  gql = api / "graphql"
 
   graphUser* = gql / "u7wQyGi6oExe8_TRWGMq4Q/UserResultByScreenNameQuery"
   graphUserById* = gql / "oPppcargziU1uDQHAUmH-A/UserResultByIdQuery"
@@ -19,6 +20,24 @@ const
   graphListBySlug* = gql / "88GTz-IPPWLn1EiU8XoNVg/ListBySlug"
   graphListMembers* = gql / "kSmxeqEeelqdHSR7jMnb_w/ListMembers"
   graphListTweets* = gql / "BbGLL1ZfMibdFNWlk7a0Pw/ListTimeline"
+
+  recommendations* = api / "1.1/users/recommendations.json"
+
+  timelineParams* = {
+    "include_can_media_tag": "1",
+    "include_cards": "1",
+    "include_entities": "1",
+    "include_profile_interstitial_type": "0",
+    "include_quote_count": "0",
+    "include_reply_count": "0",
+    "include_user_entities": "0",
+    "include_ext_reply_count": "0",
+    "include_ext_media_color": "0",
+    "cards_platform": "Web-13",
+    "tweet_mode": "extended",
+    "send_error_codes": "1",
+    "simple_quoted_tweet": "1"
+  }.toSeq
 
   gqlFeatures* = """{
   "android_graphql_skip_api_media_color_palette": false,
