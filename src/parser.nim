@@ -403,6 +403,10 @@ proc parseTimeline*(js: JsonNode; after=""): Timeline =
         else:
           result.top = cursor{"value"}.getStr
 
+proc parseRecommendations*(js: JsonNode): Recommendations =
+  for u in js:
+    result.add parseUser(u{"user"})
+
 proc parsePhotoRail*(js: JsonNode): PhotoRail =
   for tweet in js:
     let

@@ -121,6 +121,12 @@ proc getStatus*(id: string): Future[Tweet] {.async.} =
   let url = status / (id & ".json") ? genParams()
   result = parseStatus(await fetch(url, Api.status))
 
+proc getRecommendations*(id: string): Future[Recommendations] {.async.} =
+  let
+    ps = genParams({"user_id": id})
+    url = recommendations ? ps
+  result = parseRecommendations(await fetch(url, Api.timeline))
+
 proc resolve*(url: string; prefs: Prefs): Future[string] {.async.} =
   let client = newAsyncHttpClient(maxRedirects=0)
   try:

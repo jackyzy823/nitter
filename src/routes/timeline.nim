@@ -28,7 +28,7 @@ template skipIf[T](cond: bool; default; body: Future[T]): Future[T] =
     body
 
 proc fetchProfile*(after: string; query: Query; skipRail=false;
-                   skipPinned=false): Future[Profile] {.async.} =
+                   skipPinned=false; skipRecommendations=false): Future[Profile] {.async.} =
   let
     name = query.fromUser[0]
     userId = await getUserId(name)
@@ -56,6 +56,10 @@ proc fetchProfile*(after: string; query: Query; skipRail=false;
       skipIf(skipRail or query.kind == media, @[]):
         getCachedPhotoRail(name)
 
+    recommendations =
+      skipIf(skipRecommendations, @[]):
+        getCachedRecommendations(userId)
+
     user = await getCachedUser(name)
 
   var pinned: Option[Tweet]
@@ -70,7 +74,8 @@ proc fetchProfile*(after: string; query: Query; skipRail=false;
     user: user,
     pinned: pinned,
     tweets: await timeline,
-    photoRail: await rail
+    photoRail: await rail,
+    recommendations: await recommendations,
   )
 
   if result.user.protected or result.user.suspended:
@@ -142,7 +147,7 @@ proc createTimelineRouter*(cfg: Config) =
           timeline.beginning = true
           resp $renderTweetSearch(timeline, prefs, getPath())
         else:
-          var profile = await fetchProfile(after, query, skipRail=true)
+          var profile = await fetchProfile(after, query, skipRail=true, skipRecommendations=true)
           if profile.tweets.content.len == 0: resp Http404
           profile.tweets.beginning = true
           resp $renderTimelineTweets(profile.tweets, prefs, getPath())
