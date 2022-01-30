@@ -166,6 +166,12 @@ proc getPhotoRail*(name: string): Future[PhotoRail] {.async.} =
     url = photoRail ? ps
   result = parsePhotoRail(await fetch(url, Api.photoRail))
 
+proc getRecommendations*(id: string): Future[Recommendations] {.async.} =
+  let
+    ps = genParams({"user_id": id})
+    url = recommendations ? ps
+  result = parseRecommendations(await fetch(url, Api.timeline))
+
 proc resolve*(url: string; prefs: Prefs): Future[string] {.async.} =
   let client = newAsyncHttpClient(maxRedirects=0)
   try:

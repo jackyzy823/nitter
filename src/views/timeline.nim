@@ -55,7 +55,7 @@ proc renderThread(thread: Tweets; prefs: Prefs; path: string): VNode =
       renderTweet(tweet, prefs, path, class=(header & "thread"),
                   index=i, last=(i == thread.high), showThread=show)
 
-proc renderUser(user: User; prefs: Prefs): VNode =
+proc renderUser*(user: User; prefs: Prefs): VNode =
   buildHtml(tdiv(class="timeline-item")):
     a(class="tweet-link", href=("/" & user.username))
     tdiv(class="tweet-body profile-result"):
