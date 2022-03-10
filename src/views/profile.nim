@@ -5,12 +5,18 @@ import karax/[karaxdsl, vdom, vstyles]
 import renderutils, search
 import ".."/[types, utils, formatters]
 
-proc renderStat(num: int; class: string; text=""): VNode =
-  let t = if text.len > 0: text else: class
-  buildHtml(li(class=class)):
-    span(class="profile-stat-header"): text capitalizeAscii(t)
+proc renderPostStat(num: int): VNode =
+  buildHtml(li(class="posts")):
+    span(class="profile-stat-header"): text capitalizeAscii("Tweets")
     span(class="profile-stat-num"):
       text insertSep($num, ',')
+
+proc renderStat(username: string; num: int; class: string; ): VNode =
+  buildHtml(a(href=(&"/{username}/{class}"))):
+    li(class=class):
+      span(class="profile-stat-header"): text capitalizeAscii(class)
+      span(class="profile-stat-num"):
+        text insertSep($num, ',')
 
 proc renderUserCard*(user: User; prefs: Prefs): VNode =
   buildHtml(tdiv(class="profile-card")):
@@ -58,10 +64,10 @@ proc renderUserCard*(user: User; prefs: Prefs): VNode =
 
       tdiv(class="profile-card-extra-links"):
         ul(class="profile-statlist"):
-          renderStat(user.tweets, "posts", text="Tweets")
-          renderStat(user.following, "following")
-          renderStat(user.followers, "followers")
-          renderStat(user.likes, "likes")
+          renderPostStat(user.tweets)
+          renderStat(user.username, user.following, "following")
+          renderStat(user.username, user.followers, "followers")
+          renderStat(user.username, user.likes, "likes")
 
 proc renderPhotoRail(profile: Profile): VNode =
   let count = insertSep($profile.user.media, ',')
