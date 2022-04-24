@@ -165,7 +165,7 @@ proc parseCard(js: JsonNode; urls: JsonNode): Card =
     result.url = vals{"player_url"}.getStrVal
     if "youtube.com" in result.url:
       result.url = result.url.replace("/embed/", "/watch?v=")
-  of audiospace, unknown:
+  of unknown:
     result.title = "This card type is not supported."
   else: discard
 

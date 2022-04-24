@@ -122,7 +122,7 @@ proc createMediaRouter*(cfg: Config) =
       if getHmac(url) != request.matches[1]:
         resp showError("Failed to verify signature", cfg)
 
-      if ".mp4" in url or ".ts" in url or ".m4s" in url:
+      if ".mp4" in url or ".ts" in url or ".m4s" in url or ".aac" in url:
         let code = await proxyMedia(request, url)
         check code
 
@@ -136,6 +136,6 @@ proc createMediaRouter*(cfg: Config) =
 
       if ".m3u8" in url:
         let vid = await safeFetch(url)
-        content = proxifyVideo(vid, cookiePref(proxyVideos))
+        content = proxifyVideo(url, vid, cookiePref(proxyVideos))
 
       resp content, m3u8Mime

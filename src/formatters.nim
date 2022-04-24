@@ -83,15 +83,21 @@ proc getM3u8Url*(content: string): string =
   if re.find(content, m3u8Regex, matches) != -1:
     result = matches[0]
 
-proc proxifyVideo*(manifest: string; proxy: bool): string =
+proc proxifyVideo*(link, manifest: string; proxy: bool): string =
+  let linkUri = parseUri(link)
   var replacements: seq[(string, string)]
   for line in manifest.splitLines:
     let url =
       if line.startsWith("#EXT-X-MAP:URI"): line[16 .. ^2]
       else: line
-    if url.startsWith('/'):
-      let path = "https://video.twimg.com" & url
-      replacements.add (url, if proxy: path.getVidUrl else: path)
+    # filter out tag and only remain url
+    if not url.startsWith('#'):
+      let parsedUrl = parseUri(url)
+      #	 ==> if proxy or relative  -> modify
+      if proxy or not parsedUrl.isAbsolute:
+        # convert from relative link to absoulte link
+        let path = if not parsedUrl.isAbsolute: $combine(linkUri , parsedUrl) else: url
+        replacements.add (url, if proxy: path.getVidUrl else: path)
   return manifest.multiReplace(replacements)
 
 proc getUserPic*(userPic: string; style=""): string =

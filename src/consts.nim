@@ -24,6 +24,9 @@ const
   graphListBySlug* = graphql / "ErWsz9cObLel1BF-HjuBlA/ListBySlug"
   graphListMembers* = graphql / "Ke6urWMeCV2UlKXGRy4sow/ListMembers"
 
+  graphAudioSpaceById* = graphql/ "8oE8HIGwK--aCKhcaKREhg/AudioSpaceById"
+  audioSpaceLivestream* = api / "1.1/live_video_stream/status"
+
   timelineParams* = {
     "include_profile_interstitial_type": "0",
     "include_blocking": "0",

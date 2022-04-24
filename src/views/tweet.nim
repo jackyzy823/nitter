@@ -181,6 +181,8 @@ proc renderCard(card: Card; prefs: Prefs; path: string): VNode =
   let large = if card.kind notin smallCards: " large" else: ""
   let url = replaceUrls(card.url, prefs)
 
+  if card.kind == audiospace: return VNode()
+
   buildHtml(tdiv(class=("card" & large))):
     if card.video.isSome:
       tdiv(class="card-container"):

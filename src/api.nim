@@ -1,8 +1,29 @@
 # SPDX-License-Identifier: AGPL-3.0-only
-import asyncdispatch, httpclient, uri, strutils, sequtils, sugar
+import asyncdispatch, httpclient, uri, strutils, sequtils, sugar , std/options
 import packedjson
 import types, query, formatters, consts, apiutils, parser
 import experimental/parser as newParser
+
+proc getAudioSpaceStream(media_key: string): Future[Option[Video]] {.async.} =
+  if media_key.len == 0: return
+  let js = await fetch( audioSpaceLivestream / media_key , Api.audioSpace)
+  result = parseAudioSpaceStream(js) 
+
+proc getAudioSpaceById*(id: string; needVideo=true) : Future[AudioSpace] {.async.} =
+  if id.len == 0: return
+  let 
+    variables = %*{
+      "id": id, "isMetatagsQuery": false , "withReplays": true ,
+      "withSuperFollowsUserFields":true,
+      "withDownvotePerspective":false,
+      "withReactionsMetadata":false,
+      "withReactionsPerspective":false,
+      "withSuperFollowsTweetFields":true
+    }
+    js = await fetchRaw(graphAudioSpaceById ?  {"variables": $variables}, Api.audioSpace)
+  result = parseGraphAudioSpace(js)
+  if needVideo and result.state in { AudioSpaceState.Ended , AudioSpaceState.Running } :
+    result.source = await getAudioSpaceStream(result.media_key)
 
 proc getGraphUser*(id: string): Future[User] {.async.} =
   if id.len == 0 or id.any(c => not c.isDigit): return

@@ -1,2 +1,2 @@
-import parser/[user, graphql, timeline]
-export user, graphql, timeline
+import parser/[user, graphql, timeline, space]
+export user, graphql, timeline, space

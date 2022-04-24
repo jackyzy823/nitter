@@ -18,6 +18,7 @@ type
     listMembers
     userRestId
     status
+    audioSpace
 
   RateLimit* = object
     remaining*: int
@@ -88,6 +89,28 @@ type
     description*: string
     playbackType*: VideoType
     variants*: seq[VideoVariant]
+
+  AudioSpace* = object
+    rest_id*: string
+    state*: AudioSpaceState
+    title*: string
+    media_key*: string
+    created_at*: int
+    started_at*: int
+    scheduled_start*: Option[int]
+    ended_at*: Option[string]
+    updated_at*: int
+    is_locked*: bool
+    is_space_available_for_replay*: bool
+    total_replay_watched*: int
+    total_live_listeners*: int
+    source*: Option[Video]
+
+  AudioSpaceState* {.pure.} = enum
+    Ended
+    TimedOut
+    Running
+    NotStarted
 
   QueryKind* = enum
     posts, replies, media, users, tweets, userList

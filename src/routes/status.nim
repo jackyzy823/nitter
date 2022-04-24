@@ -5,7 +5,7 @@ import jester, karax/vdom
 
 import router_utils
 import ".."/[types, formatters, api]
-import ../views/[general, status]
+import ../views/[general, status, tweet]
 
 export uri, sequtils, options, sugar
 export router_utils
@@ -75,3 +75,17 @@ proc createStatusRouter*(cfg: Config) =
       
     get "/@name/thread/@id/?":
       redirect("/$1/status/$2" % [@"name", @"id"])
+
+    get "/i/spaces/@id":
+      let
+        audiospace = await getAudioSpaceById(@"id")
+        prefs = cookiePrefs()
+      echo audiospace
+      if audiospace.source.isSome:
+        let html = renderVideo(audiospace.source.get(), prefs , getPath())
+        resp renderMain(html, request, cfg, prefs, audiospace.title , "", "" , audiospace.source.get().url)
+      resp ""
+
+    get "/i/spaces/@id/peek":
+      let audiospace = await getAudioSpaceById(@"id", needVideo=false)
+      resp ""
