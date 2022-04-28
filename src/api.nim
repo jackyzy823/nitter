@@ -9,7 +9,7 @@ proc getAudioSpaceStream(media_key: string): Future[Option[Video]] {.async.} =
   let js = await fetch( audioSpaceLivestream / media_key , Api.audioSpace)
   result = parseAudioSpaceStream(js) 
 
-proc getAudioSpaceById*(id: string; needVideo=true) : Future[AudioSpace] {.async.} =
+proc getAudioSpaceById*(id: string; needContent=true) : Future[AudioSpace] {.async.} =
   if id.len == 0: return
   let 
     variables = %*{
@@ -22,8 +22,16 @@ proc getAudioSpaceById*(id: string; needVideo=true) : Future[AudioSpace] {.async
     }
     js = await fetchRaw(graphAudioSpaceById ?  {"variables": $variables}, Api.audioSpace)
   result = parseGraphAudioSpace(js)
-  if needVideo and result.state in { AudioSpaceState.Ended , AudioSpaceState.Running } :
+
+  if not needContent: return
+
+  case result.state:
+  of AudioSpaceState.Running:
     result.source = await getAudioSpaceStream(result.media_key)
+  of AudioSpaceState.TimedOut, AudioSpaceState.Ended:
+    if result.is_space_available_for_replay:
+      result.source = await getAudioSpaceStream(result.media_key)
+  else: discard
 
 proc getGraphUser*(id: string): Future[User] {.async.} =
   if id.len == 0 or id.any(c => not c.isDigit): return

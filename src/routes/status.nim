@@ -5,12 +5,12 @@ import jester, karax/vdom
 
 import router_utils
 import ".."/[types, formatters, api]
-import ../views/[general, status, tweet]
+import ../views/[general, status, space]
 
 export uri, sequtils, options, sugar
 export router_utils
 export api, formatters
-export status
+export status, space
 
 proc createStatusRouter*(cfg: Config) =
   router status:
@@ -80,12 +80,6 @@ proc createStatusRouter*(cfg: Config) =
       let
         audiospace = await getAudioSpaceById(@"id")
         prefs = cookiePrefs()
-      echo audiospace
-      if audiospace.source.isSome:
-        let html = renderVideo(audiospace.source.get(), prefs , getPath())
-        resp renderMain(html, request, cfg, prefs, audiospace.title , "", "" , audiospace.source.get().url)
-      resp ""
+      let html = renderSpace(audiospace, prefs, getPath())
+      resp renderMain(html, request, cfg, prefs, audiospace.title)
 
-    get "/i/spaces/@id/peek":
-      let audiospace = await getAudioSpaceById(@"id", needVideo=false)
-      resp ""

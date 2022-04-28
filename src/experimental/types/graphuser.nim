@@ -7,6 +7,6 @@ type
   UserData* = object
     result*: UserResult
 
-  UserResult = object
+  UserResult* = object
     legacy*: RawUser
     restId*: string

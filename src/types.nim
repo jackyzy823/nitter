@@ -96,21 +96,28 @@ type
     title*: string
     media_key*: string
     created_at*: int
-    started_at*: int
+    started_at*: Option[int]
     scheduled_start*: Option[int]
-    ended_at*: Option[string]
+    ended_at*: Option[int]
     updated_at*: int
     is_locked*: bool
     is_space_available_for_replay*: bool
     total_replay_watched*: int
     total_live_listeners*: int
+    creator*: User
+    participants_total*: int
+    admins*: seq[User]
+    speakers*: seq[User]
+    listeners*: seq[User]
     source*: Option[Video]
 
   AudioSpaceState* {.pure.} = enum
+    NotStarted
     Ended
     TimedOut
     Running
-    NotStarted
+    PrePublished
+    Canceled
 
   QueryKind* = enum
     posts, replies, media, users, tweets, userList

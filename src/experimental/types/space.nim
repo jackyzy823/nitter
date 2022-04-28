@@ -1,4 +1,5 @@
 import options
+from graphuser import UserData, UserResult
 from ../../types import AudioSpaceState
 
 type 
@@ -19,7 +20,7 @@ type
     title*: string
     media_key*: string
     created_at*: int
-    started_at*: int
+    started_at*: Option[int]
     scheduled_start*: Option[int]
     # stateEnded/stateTimedOut
     ended_at*: Option[string]
@@ -31,6 +32,7 @@ type
     conversation_controls*: int
     total_replay_watched*: int
     total_live_listeners*: int
+    creator_results*: UserData
     # creator_results 
 
 
@@ -42,11 +44,11 @@ type
 
   Participants = object
     total*: int
-    admins*: seq[Paticipant]
-    speakers*: seq[Paticipant]
-    listeners*: seq[Paticipant]
+    admins*: seq[Participant]
+    speakers*: seq[Participant]
+    listeners*: seq[Participant]
 
-  Paticipant = object
+  Participant* = object
     periscope_user_id*: string
     start*: int
     twitter_screen_name*: string
@@ -55,6 +57,5 @@ type
     is_verified*: bool
     is_muted_by_admin*: bool
     is_muted_by_guest*: bool
-    # user_results -> result -> { __typename , has_nft_avatar}
-    # user -> rest_id
+    user*: UserResult
     
