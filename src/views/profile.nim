@@ -57,6 +57,11 @@ proc renderUserCard*(user: User; prefs: Prefs): VNode =
         span(title=getJoinDateFull(user)):
           icon "calendar", getJoinDate(user)
 
+      tdiv(class="profile-link"):
+        span:
+          icon "pin"
+          a(href="/i/user/" & user.id): text user.fullname & "(@" & user.username & ")"
+
       tdiv(class="profile-card-extra-links"):
         ul(class="profile-statlist"):
           renderStat(user.tweets, "posts", text="Tweets")
