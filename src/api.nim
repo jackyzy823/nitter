@@ -15,13 +15,13 @@ proc getGraphListBySlug*(name, list: string): Future[List] {.async.} =
   let
     variables = %*{"screenName": name, "listSlug": list, "withHighlightedLabel": false}
     url = graphListBySlug ? {"variables": $variables}
-  result = parseGraphList(await fetch(url, Api.listBySlug))
+  result = parseGraphList(await fetchRaw(url, Api.listBySlug))
 
 proc getGraphList*(id: string): Future[List] {.async.} =
   let
     variables = %*{"listId": id, "withHighlightedLabel": false}
     url = graphList ? {"variables": $variables}
-  result = parseGraphList(await fetch(url, Api.list))
+  result = parseGraphList(await fetchRaw(url, Api.list))
 
 proc getGraphListMembers*(list: List; after=""): Future[Result[User]] {.async.} =
   if list.id.len == 0: return

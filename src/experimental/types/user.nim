@@ -41,3 +41,7 @@ type
 
   Color* = object
     red*, green*, blue*: int
+
+  UserResult* = object
+    legacy*: RawUser
+    restId*: string
