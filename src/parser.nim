@@ -219,7 +219,7 @@ proc parseTweet(js: JsonNode): Tweet =
     let name = jsCard{"name"}.getStr
     if "poll" in name:
       if "image" in name:
-        result.photos.add jsCard{"binding_values", "image_large"}.getImageVal
+        result.photos.add Photo(url: jsCard{"binding_values", "image_large"}.getImageVal)
 
       result.poll = some parsePoll(jsCard)
     elif name == "amplify":
@@ -231,7 +231,7 @@ proc parseTweet(js: JsonNode): Tweet =
     for m in jsMedia:
       case m{"type"}.getStr
       of "photo":
-        result.photos.add m{"media_url_https"}.getImageStr
+        result.photos.add Photo(url:m{"media_url_https"}.getImageStr, alt:m{"ext_alt_text"}.getStr)
       of "video":
         result.video = some(parseVideo(m))
         with user, m{"additional_media_info", "source_user"}:
@@ -407,7 +407,7 @@ proc parsePhotoRail*(js: JsonNode): PhotoRail =
   for tweet in js:
     let
       t = parseTweet(tweet)
-      url = if t.photos.len > 0: t.photos[0]
+      url = if t.photos.len > 0: t.photos[0].url
             elif t.video.isSome: get(t.video).thumb
             elif t.gif.isSome: get(t.gif).thumb
             elif t.card.isSome: get(t.card).image
