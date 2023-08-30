@@ -9,6 +9,7 @@ const
   dayInSeconds = 24 * 60 * 60
   apiMaxReqs: Table[Api, int] = {
     Api.search: 50,
+    Api.recommendations: 60,
     Api.tweetDetail: 150,
     Api.photoRail: 180,
     Api.userTweets: 500,

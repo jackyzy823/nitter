@@ -8,6 +8,7 @@ const
   api = parseUri("https://api.twitter.com")
   activate* = $(api / "1.1/guest/activate.json")
 
+  recommendations* = api / "1.1/users/recommendations.json"
   photoRail* = api / "1.1/statuses/media_timeline.json"
 
   graphql = api / "graphql"
