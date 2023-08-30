@@ -2,7 +2,7 @@
 import strutils, strformat
 import karax/[karaxdsl, vdom, vstyles]
 
-import renderutils, search
+import renderutils, search, timeline
 import ".."/[types, utils, formatters]
 
 proc renderStat(num: int; class: string; text=""): VNode =
@@ -89,6 +89,20 @@ proc renderPhotoRail(profile: Profile): VNode =
         a(href=(&"/{profile.user.username}/status/{photo.tweetId}#m")):
           genImg(photo.url & photoSuffix)
 
+proc renderRecommendations(profile: Profile; prefs: Prefs): VNode =
+  buildHtml(tdiv(class="recommendations-card")):
+    tdiv(class="recommendations-header"):
+      span: text "You might like"
+
+    input(id="recommendations-list-toggle", `type`="checkbox")
+    label(`for`="recommendations-list-toggle", class="recommendations-header-mobile"):
+      span: text "You might like"
+      icon "down"
+
+    tdiv(class="recommendations-list"):
+      for i, recommendation in profile.recommendations:
+        renderUser(recommendation, prefs)
+
 proc renderBanner(banner: string): VNode =
   buildHtml():
     if banner.len == 0:
@@ -117,6 +131,8 @@ proc renderProfile*(profile: var Profile; prefs: Prefs; path: string): VNode =
       renderUserCard(profile.user, prefs)
       if profile.photoRail.len > 0:
         renderPhotoRail(profile)
+      if profile.recommendations.len > 0:
+        renderRecommendations(profile, prefs)
 
     if profile.user.protected:
       renderProtected(profile.user.username)
