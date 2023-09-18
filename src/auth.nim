@@ -5,7 +5,7 @@ import experimental/parser/session
 
 # max requests at a time per session to avoid race conditions
 const
-  maxConcurrentReqs = 2
+  maxConcurrentReqs = 5
   hourInSeconds = 60 * 60
 
 var
