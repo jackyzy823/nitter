@@ -18,6 +18,12 @@ proc setHttpProxy*(url: string; auth: string) =
   else:
     proxy = nil
 
+proc clear*(pool: HttpPool) =
+  for client in pool.conns:
+    try: client.close()
+    except: discard
+  pool.conns.setLen(0)
+
 proc release*(pool: HttpPool; client: AsyncHttpClient; badClient=false) =
   if pool.conns.len >= maxConns or badClient:
     try: client.close()
@@ -42,6 +48,7 @@ template use*(pool: HttpPool; heads: HttpHeaders; body: untyped): untyped =
   except BadClientError, ProtocolError:
     # Twitter returned 503 or closed the connection, we need a new client
     pool.release(c, true)
+    pool.clear()
     badClient = false
     c = pool.acquire(heads)
     body
