@@ -27,7 +27,7 @@ template skipIf[T](cond: bool; default; body: Future[T]): Future[T] =
   else:
     body
 
-proc fetchProfile*(after: string; query: Query; skipRail=false;
+proc fetchProfile*(after: string; query: Query; skipRail=true;
                    skipPinned=false): Future[Profile] {.async.} =
   let
     name = query.fromUser[0]
