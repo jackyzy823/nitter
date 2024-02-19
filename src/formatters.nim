@@ -1,16 +1,17 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 import strutils, strformat, times, uri, tables, xmltree, htmlparser, htmlgen
-import std/[enumerate, re]
+import std/[enumerate, re, sequtils, sugar]
 import types, utils, query
 
 const
   cards = "cards.twitter.com/cards"
   tco = "https://t.co"
+  xcom = "https://x.com"
   twitter = parseUri("https://twitter.com")
 
 let
-  twRegex = re"(?<=(?<!\S)https:\/\/|(?<=\s))(www\.|mobile\.)?twitter\.com"
-  twLinkRegex = re"""<a href="https:\/\/twitter.com([^"]+)">twitter\.com(\S+)</a>"""
+  twRegex = re"(?<=(?<!\S)https:\/\/|(?<=\s))(www\.|mobile\.)?(?:x|twitter)\.com"
+  twLinkRegex = re"""<a href="https:\/\/(?:x|twitter).com([^"]+)">(?:x|twitter)\.com(\S+)</a>"""
 
   ytRegex = re(r"([A-z.]+\.)?youtu(be\.com|\.be)", {reStudy, reIgnoreCase})
 
@@ -56,7 +57,7 @@ proc replaceUrls*(body: string; prefs: Prefs; absolute=""): string =
   if prefs.replaceYouTube.len > 0 and "youtu" in result:
     result = result.replace(ytRegex, prefs.replaceYouTube)
 
-  if prefs.replaceTwitter.len > 0 and ("twitter.com" in body or tco in body):
+  if prefs.replaceTwitter.len > 0 and (@["twitter.com", tco, xcom].any(x => x in body)):
     result = result.replace(tco, https & prefs.replaceTwitter & "/t.co")
     result = result.replace(cards, prefs.replaceTwitter & "/cards")
     result = result.replace(twRegex, prefs.replaceTwitter)
