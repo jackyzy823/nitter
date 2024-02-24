@@ -141,4 +141,8 @@ proc createMediaRouter*(cfg: Config) =
         let vid = await safeFetch(url)
         content = proxifyVideo(vid, cookiePref(proxyVideos))
 
+      if ".vtt" in url:
+        # TODO Or set enableWebVTT : false to new Hls in hlsPlayback.js
+        content = await safeFetch(url)
+
       resp content, m3u8Mime
