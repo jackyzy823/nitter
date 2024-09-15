@@ -160,3 +160,12 @@
     display: flex;
     position: relative;
 }
+
+// For display video progressbar under Firefox
+// on narrow screen device.
+@media(max-width: 360px) {
+    .timeline-item {
+        padding-left: 0.7em;
+        padding-right: 0.7em;
+    }
+}
