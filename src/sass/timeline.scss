@@ -503,3 +503,11 @@
     padding: 8px 0;
   }
 }
+// For display video progressbar under Firefox
+// on narrow screen device.
+@media(max-width: 360px) {
+    .timeline-item {
+        padding-left: 0.2em;
+        padding-right: 0.4em;
+    }
+}
