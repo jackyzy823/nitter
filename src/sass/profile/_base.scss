@@ -5,6 +5,7 @@
 @import "about-account";
 @import "photo-rail";
 @import "community";
+@import 'recommendations';
 
 .profile-tabs {
   @include panel(auto, 900px);

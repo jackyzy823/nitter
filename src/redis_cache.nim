@@ -88,6 +88,9 @@ proc cache*(data: List) {.async.} =
 proc cache*(data: PhotoRail; name: string) {.async.} =
   await setEx("pr2:" & toLower(name), baseCacheTime * 2, compress(toFlatty(data)))
 
+proc cache*(data: Recommendations; userId: string) {.async.} =
+  await setex("rc:" & userId, listCacheTime, compress(toFlatty(data)))
+
 proc cache*(data: User) {.async.} =
   if data.username.len == 0: return
   let name = toLower(data.username)
@@ -232,6 +235,15 @@ proc getCachedCommunityModerators*(id: string): Future[seq[User]] {.async.} =
     let mods = await getGraphCommunityModerators(id)
     result = mods.content
     await setEx("cmm:" & id, listCacheTime, compress(toFlatty(result)))
+
+proc getCachedRecommendations*(userId: string): Future[Recommendations] {.async.} =
+  if userId.len == 0: return
+  let recommendations = await get("rc:" & userId)
+  if recommendations != redisNil:
+    recommendations.deserialize(Recommendations)
+  else:
+    result = await getRecommendations(userId)
+    await cache(result, userId)
 
 proc getCachedList*(username=""; slug=""; id=""): Future[List] {.async.} =
   let list = if id.len == 0: redisNil

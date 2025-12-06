@@ -97,6 +97,18 @@ proc renderPhotoRail(profile: Profile): VNode =
         a(href=(&"/{profile.user.username}/status/{photo.tweetId}#m")):
           genImg(photo.url & photoSuffix)
 
+proc renderRecommendations(profile: Profile; prefs: Prefs): VNode =
+  buildHtml(tdiv(class="recommendations-card")):
+    tdiv(class="recommendations-header"):
+      span: text "You might like"
+
+    input(id="recommendations-list-toggle", `type`="checkbox")
+    label(`for`="recommendations-list-toggle", class="recommendations-header-mobile"):
+      span: text "You might like"
+      icon "down"
+
+    renderRecommendationsUsers(profile.recommendations, prefs)
+
 proc renderBanner(banner: string): VNode =
   buildHtml():
     if banner.len == 0:
@@ -130,6 +142,9 @@ proc renderProfile*(profile: var Profile; prefs: Prefs; path: string): VNode =
         renderUserCard(profile.user, prefs, profile.accountInfo)
         if profile.photoRail.len > 0:
           renderPhotoRail(profile)
+
+        if profile.recommendations.len > 0:
+          renderRecommendations(profile, prefs)
 
     if profile.user.protected:
       renderProtected(profile.user.username)

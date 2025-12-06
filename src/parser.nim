@@ -1025,3 +1025,6 @@ proc parseGraphCommunityMembers*(js: JsonNode; after=""): Result[User] =
   if cursor.len > 0:
     result.bottom = cursor
 
+proc parseRecommendations*(js: JsonNode): Recommendations =
+  for u in js:
+    result.add parseUser(u{"user"})
