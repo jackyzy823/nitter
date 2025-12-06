@@ -619,3 +619,7 @@ proc parseGraphSearch*[T: User | Tweets](js: JsonNode; after=""): Result[T] =
     elif typ == "TimelineReplaceEntry":
       if instruction{"entry_id_to_replace"}.getStr.startsWith("cursor-bottom"):
         result.bottom = instruction{"entry", "content", "value"}.getStr
+
+proc parseRecommendations*(js: JsonNode): Recommendations =
+  for u in js:
+    result.add parseUser(u{"user"})

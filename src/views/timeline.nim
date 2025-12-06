@@ -71,6 +71,11 @@ proc renderUser(user: User; prefs: Prefs): VNode =
       tdiv(class="tweet-content media-body", dir="auto"):
         verbatim replaceUrls(user.bio, prefs)
 
+proc renderRecommendationsUsers*(recommendations: Recommendations, prefs: Prefs): VNode =
+  buildHtml(tdiv(class="recommendations-list")):
+    for i, recommendation in recommendations:
+      renderUser(recommendation, prefs)
+
 proc renderTimelineUsers*(results: Result[User]; prefs: Prefs; path=""): VNode =
   buildHtml(tdiv(class="timeline")):
     if not results.beginning:

@@ -3,6 +3,7 @@ import asyncdispatch, httpclient, strutils, sequtils, sugar
 import packedjson
 import types, query, formatters, consts, apiutils, parser
 import experimental/parser as newParser
+import uri
 
 # Helper to generate params object for GraphQL requests
 proc genParams(variables: string; fieldToggles = ""): seq[(string, string)] =
@@ -199,3 +200,27 @@ proc resolve*(url: string; prefs: Prefs): Future[string] {.async.} =
     discard
   finally:
     client.close()
+
+proc recommendationsUrl(id: string; limit="100"): Uri =
+  let ps = {
+    "include_profile_interstitial_type": "0",
+    "include_blocking": "1",
+    "include_blocked_by": "1",
+    "include_followed_by": "1",
+    "include_want_retweets": "1",
+    "include_mute_edge": "1",
+    "include_can_dm": "1",
+    "include_can_media_tag": "1",
+    "include_ext_is_blue_verified": "1",
+    "include_ext_verified_type": "1",
+    "include_ext_profile_image_shape": "1",
+    "skip_status": "1",
+
+    "user_id": id,
+    "limit": limit
+  }.toSeq
+  result = parseUri("https://api.x.com") / "1.1/users/recommendations.json" ? ps
+
+proc getRecommendations*(id: string): Future[Recommendations] {.async.} =
+  let reqHint = ApiReq(cookie: ApiUrl(endpoint: "recommends"), oauth: ApiUrl(endpoint: "recommends"))
+  result = parseRecommendations(await fetch(recommendationsUrl(id), reqHint))

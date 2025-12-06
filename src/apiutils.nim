@@ -183,3 +183,24 @@ proc fetchRaw*(req: ApiReq): Future[string] {.async.} =
       if not (result.startsWith('{') or result.startsWith('[')):
         echo resp.status, ": ", result, " --- url: ", url
         result.setLen(0)
+
+proc fetch*(url: Uri, reqHint: ApiReq): Future[JsonNode] {.async.} =
+  let req = reqHint
+  retry:
+    var
+      body: string
+      session = await getAndValidateSession(req)
+
+    fetchImpl body:
+      if body.startsWith('{') or body.startsWith('['):
+        result = parseJson(body)
+      else:
+        echo resp.status, ": ", body, " --- url: ", url
+        result = newJNull()
+
+      let error = result.getError
+      if error != null and error notin errorsToSkip:
+        echo "Fetch error, API: ", url.path, ", error: ", error
+        if error in {expiredToken, badToken, locked}:
+          invalidate(session)
+          raise rateLimitError()

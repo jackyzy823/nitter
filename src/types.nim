@@ -144,6 +144,8 @@ type
 
   PhotoRail* = seq[GalleryPhoto]
 
+  Recommendations* = seq[User]
+
   Poll* = object
     options*: seq[string]
     values*: seq[int]
@@ -243,6 +245,7 @@ type
   Profile* = object
     user*: User
     photoRail*: PhotoRail
+    recommendations*: Recommendations
     pinned*: Option[Tweet]
     tweets*: Timeline
 
