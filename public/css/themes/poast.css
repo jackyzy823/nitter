@@ -1,0 +1,41 @@
+body {
+    --bg_color: #020303;
+    --fg_color: #A6BFBF;
+    --fg_faded: #354F4F;
+    --fg_dark: var(--fg_faded);
+    --fg_nav: var(--accent);
+
+    --bg_panel: #000000;
+    --bg_elements: #020303;
+    --bg_overlays: #000000;
+    --bg_hover: #071413;
+
+    --grey: var(--fg_faded);
+    --dark_grey: #293D3D;
+    --darker_grey: #243636;
+    --darkest_grey: #1A2626;
+    --border_grey: #000000;
+
+    --accent: #5C8888;
+    --accent_light: #649494;
+    --accent_dark: var(--accent);
+    --accent_border: #649494;
+
+    --play_button: #ffb86c;
+    --play_button_hover: #ffc689;
+
+    --more_replies_dots: #5C8888;
+    --error_red: #ff5555;
+
+    --verified_blue: var(--accent);
+    --icon_text: #F8F8F2;
+
+    --tab: #354F4F;
+    --tab_selected: var(--accent);
+
+    --profile_stat: #649494;
+}
+
+.search-bar > form input::placeholder{
+    color: var(--fg_faded);
+}
